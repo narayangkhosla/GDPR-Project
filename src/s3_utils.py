@@ -1,5 +1,7 @@
 # Downloads CSV content from S3:
 import boto3
+import re
+
 from botocore.exceptions import ClientError
 
 
@@ -16,3 +18,8 @@ def fetch_file_from_s3(s3_uri: str) -> str:
             )
         else:
             raise
+
+
+def is_valid_s3_uri(uri: str) -> bool:
+    pattern = r"^s3://[a-z0-9\-\.]+/.+"
+    return re.match(pattern, uri) is not None

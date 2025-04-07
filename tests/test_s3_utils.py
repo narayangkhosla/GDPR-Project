@@ -1,5 +1,6 @@
 import boto3
 import pytest
+
 from moto import mock_aws
 from src.s3_utils import fetch_file_from_s3
 from botocore.exceptions import ClientError
