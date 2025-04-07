@@ -1,0 +1,13 @@
+pg8000
+pytest
+boto3
+pytest-mock
+pytest-testdox
+pandas
+pyarrow
+black
+flake8
+freezegun==0.3.4
+botocore
+moto
+bandit
