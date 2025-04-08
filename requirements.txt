@@ -9,5 +9,9 @@ black
 flake8
 freezegun==0.3.4
 botocore
-moto
+moto[all]==4.1.14
 bandit
+localstack
+awscli-local
+chardet     # for automatic encoding detection
+python-dotenv  # if you use .env for local AWS creds

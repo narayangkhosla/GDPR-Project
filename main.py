@@ -1,11 +1,26 @@
 # main handler (src/main.py)
+import argparse
 import json
 from src.s3_utils import fetch_file_from_s3, is_valid_s3_uri
 from src.obfuscator import obfuscate_csv
 from src.exceptions import UnsupportedFormatError
+from src.utils.logging_utils import setup_file_logger
+from src.exceptions import S3ObjectNotFoundError
+
+logger = setup_file_logger(__name__, "logs/main.log")
 
 
-def obfuscate_handler(json_input: str) -> bytes:
+# Fully validated: JSON, required keys, types, format, and extension ✅
+def obfuscate_handler(json_input: str, encoding_override: str = None) -> bytes:
+    """
+    Main handler to process input, fetch the file, and return obfuscated output.
+
+    Args:
+        json_input (str): JSON string with 'file_to_obfuscate' and 'pii_fields'.
+
+    Returns:
+        bytes: Obfuscated file content as bytes for upload to S3.
+    """
     try:
         payload = json.loads(json_input)
     except json.JSONDecodeError:
@@ -35,5 +50,54 @@ def obfuscate_handler(json_input: str) -> bytes:
     if not s3_uri.lower().endswith(".csv"):
         raise UnsupportedFormatError("Only .csv files are currently supported.")
 
-    file_data = fetch_file_from_s3(s3_uri)
+    file_data = fetch_file_from_s3(s3_uri, encoding_override)
     return obfuscate_csv(file_data, pii_fields)
+
+
+# -----------------------------
+# 🖥️ CLI Demo Code (Optional)
+# -----------------------------
+def main():
+    parser = argparse.ArgumentParser(
+        description="Obfuscate PII fields in a CSV file from S3."
+    )
+    parser.add_argument(
+        "--s3",
+        required=True,
+        help="S3 URI of the input CSV file (e.g., s3://bucket/file.csv)",
+    )
+    parser.add_argument(
+        "--fields", nargs="+", required=True, help="List of PII fields to obfuscate"
+    )
+    parser.add_argument(
+        "--output", help="(Optional) Output file path to save obfuscated result"
+    )
+    parser.add_argument(
+        "--encoding",
+        help="(Optional) Force a specific encoding (e.g. utf-8, utf-16, latin-1)",
+    )
+
+    args = parser.parse_args()
+
+    input_payload = {"file_to_obfuscate": args.s3, "pii_fields": args.fields}
+
+    try:
+        obfuscated_data = obfuscate_handler(
+            json.dumps(input_payload), encoding_override=args.encoding
+        )
+
+        if args.output:
+            with open(args.output, "wb") as f:
+                f.write(obfuscated_data)
+            print(f"Obfuscated file written to {args.output}")
+        else:
+            print(obfuscated_data.decode("utf-8").encode().decode("unicode_escape"))
+    except S3ObjectNotFoundError as e:
+        logger.warning(f"🛑 Skipping – file not found: {e.bucket}/{e.key}")
+
+    except Exception as e:
+        print(f"❌ Error: {e}")
+
+
+if __name__ == "__main__":
+    main()

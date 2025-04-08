@@ -43,10 +43,29 @@ logger = logging.getLogger(__name__)
 
 #     return output_buffer.getvalue().encode("utf-8")
 
+# The following function handles:
+# Empty values ✅
+# Already obfuscated values ✅
+# Quoted headers ✅
+# Non-string field names ✅
+# Skips missing fields (by design) ✅
+
 
 def obfuscate_csv(content: str, pii_fields: List[str]) -> bytes:
-    # log events, but not content
-    logger.info("Starting obfuscation of CSV content.")
+    """
+    Obfuscates specified fields in a CSV string and returns the result as bytes.
+
+    Args:
+        content (str): The CSV file content as a string.
+        pii_fields (List[str]): List of field names to obfuscate.
+
+    Returns:
+        bytes: Obfuscated CSV content encoded in UTF-8.
+
+    Raises:
+        ValueError: If content is not a valid CSV.
+        TypeError: If pii_fields contains non-strings.
+    """
 
     # Early rejection: JSON-style content (starts with { or [)
     if content.strip().startswith("{") or content.strip().startswith("["):
@@ -57,6 +76,9 @@ def obfuscate_csv(content: str, pii_fields: List[str]) -> bytes:
 
     if not reader.fieldnames or len(reader.fieldnames) < 2:
         raise ValueError("CSV must have at least two columns in the header.")
+
+    # log events, but not content
+    logger.info("Starting obfuscation of CSV content.")
 
     output_buffer = io.StringIO()
     writer = csv.DictWriter(output_buffer, fieldnames=reader.fieldnames)
