@@ -1,8 +1,6 @@
 import boto3
 import pytest
-import uuid
 
-from moto import mock_s3
 from src.s3_utils import fetch_file_from_s3
 from unittest.mock import patch, MagicMock
 from src.exceptions import S3ObjectNotFoundError

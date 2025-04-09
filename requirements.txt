@@ -15,5 +15,4 @@ localstack
 awscli-local
 chardet     # for automatic encoding detection
 python-dotenv  # if you use .env for local AWS creds
-pandas
-pyarrow
+ruff

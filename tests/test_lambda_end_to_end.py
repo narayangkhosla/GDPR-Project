@@ -1,8 +1,7 @@
 import json
 import pytest
-from main import lambda_handler
+from src.main import lambda_handler
 from src.s3_utils import get_s3_client
-from src.exceptions import UnsupportedFormatError
 
 
 # I am using parameterization features and moto fixtures to simulate realistic S3 setups — including alternate buckets, field variations, and UTF-16/JSON formats.
@@ -53,10 +52,9 @@ def test_lambda_with_varied_fields(s3_bucket, pii_fields, csv_content, expected_
     }
 
     # Patch obfuscate_handler to use dynamic fields
-    from main import obfuscate_handler
     from unittest.mock import patch
 
-    with patch("main.obfuscate_handler") as mock_handler:
+    with patch("src.main.obfuscate_handler") as mock_handler:
         from src.obfuscator import obfuscate_csv
 
         result = obfuscate_csv(csv_content, pii_fields)

@@ -5,10 +5,7 @@
 # Downloads the result
 # Confirms the PII was correctly obfuscated
 
-import boto3
-import json
-import pytest
-from main import lambda_handler
+from src.main import lambda_handler
 from src.s3_utils import get_s3_client
 
 # Mocks input file upload to S3

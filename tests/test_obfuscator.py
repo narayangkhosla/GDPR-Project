@@ -4,9 +4,7 @@ import time
 import logging
 import pandas as pd
 import io
-from main import obfuscate_handler
 from src.obfuscator import obfuscate_csv, obfuscate_json, obfuscate_parquet
-from src.s3_utils import get_s3_client
 
 
 def test_obfuscate_csv():

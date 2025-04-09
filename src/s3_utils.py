@@ -6,7 +6,6 @@ import chardet
 from botocore.exceptions import ClientError
 from src.utils.logging_utils import setup_file_logger
 from src.exceptions import S3ObjectNotFoundError
-from typing import Union
 
 logger = setup_file_logger(__name__, "logs/s3_utils.log")
 

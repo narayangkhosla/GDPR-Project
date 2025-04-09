@@ -1,5 +1,5 @@
 import pytest
-from main import obfuscate_handler
+from src.main import obfuscate_handler
 from src.exceptions import UnsupportedFormatError
 
 
