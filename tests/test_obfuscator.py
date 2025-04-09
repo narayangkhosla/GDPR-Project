@@ -1,7 +1,12 @@
+import json
 import pytest
 import time
 import logging
-from src.obfuscator import obfuscate_csv
+import pandas as pd
+import io
+from main import obfuscate_handler
+from src.obfuscator import obfuscate_csv, obfuscate_json, obfuscate_parquet
+from src.s3_utils import get_s3_client
 
 
 def test_obfuscate_csv():
@@ -175,3 +180,132 @@ def test_csv_with_quoted_headers():
     assert "***" in result
     assert "John" not in result
     assert "john@example.com" not in result
+
+
+##### for obfuscate_json #######
+# Valid JSON list of objects
+def test_obfuscate_json_list_of_objects():
+    input_data = json.dumps(
+        [
+            {"id": 1, "name": "Alice", "email": "alice@example.com"},
+            {"id": 2, "name": "Bob", "email": "bob@example.com"},
+        ]
+    )
+    pii_fields = ["name", "email"]
+    result = obfuscate_json(input_data, pii_fields).decode("utf-8")
+
+    assert result.count("***") == 4
+    assert "Alice" not in result
+    assert "bob@example.com" not in result
+
+
+# 	Valid single JSON object
+def test_obfuscate_json_single_object():
+    input_data = json.dumps(
+        {"id": 1, "name": "Charlie", "email": "charlie@example.com"}
+    )
+    pii_fields = ["email"]
+    result = obfuscate_json(input_data, pii_fields).decode("utf-8")
+
+    assert "***" in result
+    assert "charlie@example.com" not in result
+    assert "Charlie" in result  # not obfuscated since name was not targeted
+
+
+# Missing PII fields (should skip silently)
+def test_obfuscate_json_missing_fields():
+    input_data = json.dumps({"id": 1, "age": 25})
+    pii_fields = ["email", "name"]
+    result = obfuscate_json(input_data, pii_fields).decode("utf-8")
+
+    assert "***" not in result
+    assert "age" in result
+
+
+# Invalid JSON format
+def test_obfuscate_json_invalid_json():
+    bad_json = '{"id": 1, name: "Missing quotes"}'
+    with pytest.raises(ValueError):
+        obfuscate_json(bad_json, ["name"])
+
+
+# 	Non-object (e.g., list of strings) → raise ValueError
+def test_obfuscate_json_invalid_structure():
+    invalid = json.dumps(["string1", "string2"])
+    with pytest.raises(ValueError):
+        obfuscate_json(invalid, ["name"])
+
+
+def test_obfuscate_parquet_valid():
+    df = pd.DataFrame(
+        {
+            "id": [1, 2],
+            "name": ["Alice", "Bob"],
+            "email": ["alice@example.com", "bob@example.com"],
+        }
+    )
+    buffer = io.BytesIO()
+    df.to_parquet(buffer, index=False, engine="pyarrow")
+
+    result = obfuscate_parquet(buffer.getvalue(), ["name", "email"])
+
+    df_result = pd.read_parquet(io.BytesIO(result), engine="pyarrow")
+    assert all(df_result["name"] == "***")
+    assert all(df_result["email"] == "***")
+    assert df_result["id"].tolist() == [1, 2]
+
+
+def test_obfuscate_parquet_invalid_format():
+    with pytest.raises(ValueError):
+        obfuscate_parquet(b"not a parquet file", ["name"])
+
+
+# def test_obfuscate_handler_json(monkeypatch, s3_bucket):
+#     s3 = get_s3_client()
+
+#     data = [
+#         {"id": 1, "name": "Alice", "email": "alice@example.com"},
+#         {"id": 2, "name": "Bob", "email": "bob@example.com"},
+#     ]
+#     s3.put_object(
+#         Bucket=s3_bucket, Key="data.json", Body=json.dumps(data).encode("utf-8")
+#     )
+
+#     input_json = json.dumps(
+#         {
+#             "file_to_obfuscate": f"s3://{s3_bucket}/data.json",
+#             "pii_fields": ["name", "email"],
+#         }
+#     )
+
+#     result = obfuscate_handler(input_json)
+#     assert "***" in result.decode()
+#     assert "Alice" not in result.decode()
+
+
+# def test_obfuscate_handler_parquet(monkeypatch, s3_bucket):
+#     df = pd.DataFrame(
+#         {
+#             "id": [1, 2],
+#             "name": ["Alice", "Bob"],
+#             "email": ["alice@example.com", "bob@example.com"],
+#         }
+#     )
+
+#     buffer = io.BytesIO()
+#     df.to_parquet(buffer, engine="pyarrow")
+#     s3 = get_s3_client()
+#     s3.put_object(Bucket=s3_bucket, Key="data.parquet", Body=buffer.getvalue())
+
+#     input_json = json.dumps(
+#         {
+#             "file_to_obfuscate": f"s3://{s3_bucket}/data.parquet",
+#             "pii_fields": ["name", "email"],
+#         }
+#     )
+
+#     result = obfuscate_handler(input_json)
+
+#     result_df = pd.read_parquet(io.BytesIO(result), engine="pyarrow")
+#     assert all(result_df["name"] == "***")
+#     assert all(result_df["email"] == "***")

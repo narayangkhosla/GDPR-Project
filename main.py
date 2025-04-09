@@ -1,8 +1,10 @@
 # main handler (src/main.py)
+import os
+import urllib.parse
 import argparse
 import json
-from src.s3_utils import fetch_file_from_s3, is_valid_s3_uri
-from src.obfuscator import obfuscate_csv
+from src.s3_utils import fetch_file_from_s3, is_valid_s3_uri, get_s3_client
+from src.obfuscator import obfuscate_csv, obfuscate_json, obfuscate_parquet
 from src.exceptions import UnsupportedFormatError
 from src.utils.logging_utils import setup_file_logger
 from src.exceptions import S3ObjectNotFoundError
@@ -46,12 +48,119 @@ def obfuscate_handler(json_input: str, encoding_override: str = None) -> bytes:
     if not is_valid_s3_uri(s3_uri):
         raise ValueError("Invalid S3 URI format.")
 
-    # 🔍 Check file extension
-    if not s3_uri.lower().endswith(".csv"):
-        raise UnsupportedFormatError("Only .csv files are currently supported.")
+    # if not s3_uri.lower().endswith(".csv"):
+    #     raise UnsupportedFormatError("Only .csv files are currently supported.")
 
-    file_data = fetch_file_from_s3(s3_uri, encoding_override)
-    return obfuscate_csv(file_data, pii_fields)
+    if s3_uri.lower().endswith(".csv"):
+        file_format = "csv"
+        binary = False
+    elif s3_uri.lower().endswith(".json"):
+        file_format = "json"
+        binary = False
+    elif s3_uri.lower().endswith(".parquet"):
+        file_format = "parquet"
+        binary = True
+    else:
+        # raise UnsupportedFormatError("Only .csv files are currently supported.")
+        raise UnsupportedFormatError(
+            "Only .csv, .json, and .parquet files are supported."
+        )
+
+    file_data = fetch_file_from_s3(s3_uri, encoding_override, binary=binary)
+
+    # 🔍 Check file extension
+    if file_format == "csv":
+        return obfuscate_csv(file_data, pii_fields)
+    elif file_format == "json":
+        return obfuscate_json(file_data, pii_fields)
+    elif file_format == "parquet":
+        return obfuscate_parquet(file_data, pii_fields)
+    # return obfuscate_csv(file_data, pii_fields)
+
+
+############### LAMBDA HANDLER #############
+# A basic Lambda setup for this project would:
+# Receive an event (e.g., from S3 trigger or Step Function)
+# Parse the S3 URI and PII fields from the event payload
+# Pass them into obfuscate_handler()
+# Return a response (or optionally write back to S3)
+
+
+def lambda_handler(event, context):
+    """
+    Lambda handler triggered by an S3 PutObject event.
+
+    Reads the uploaded file, obfuscates it, and writes the result to a new S3 location.
+    """
+    try:
+        # Extract bucket and key from the event
+        record = event["Records"][0]
+        bucket = record["s3"]["bucket"]["name"]
+        key = urllib.parse.unquote_plus(record["s3"]["object"]["key"])
+
+        s3_uri = f"s3://{bucket}/{key}"
+
+        # Hardcoded for demo: fields to obfuscate
+        pii_fields = ["name", "email"]
+
+        # Build JSON payload
+        payload = {"file_to_obfuscate": s3_uri, "pii_fields": pii_fields}
+
+        obfuscated_data = obfuscate_handler(json.dumps(payload))
+
+        # Define output location: write to 'obfuscated/' folder in same bucket
+        output_key = f"obfuscated/{key.split('/')[-1]}"
+        s3 = get_s3_client()
+
+        # Check if the output file already exists
+        force = event.get("force")
+        if force is None:
+            env = os.getenv("ENV", "dev").lower()
+            if env == "dev":
+                force = True
+            else:
+                force = os.getenv("FORCE_OVERWRITE", "false").lower() == "true"
+
+        # logger.info(f"Lambda running in ENV={env.upper()}, force={force}")
+        logger.info(f"Force overwrite is set to: force={force}")
+
+        if not force:
+            try:
+                s3.head_object(Bucket=bucket, Key=output_key)
+                # If no exception: the object exists → don't overwrite
+                logger.warning(
+                    f"⚠️ Output file already exists at s3://{bucket}/{output_key}. Skipping write."
+                )
+                return {
+                    "statusCode": 409,
+                    "body": f"File already exists: s3://{bucket}/{output_key}",
+                }
+            except s3.exceptions.ClientError as e:
+                # If 404 (NoSuchKey), it's okay to write the new file
+                if e.response["Error"]["Code"] != "404":
+                    raise
+
+        # logger.info(f"📝 Writing obfuscated file to s3://{bucket}/{output_key}")
+        # logger.info(f"Obfuscated data: {obfuscated_data[:100]}")  # preview
+        s3.put_object(Bucket=bucket, Key=output_key, Body=obfuscated_data)
+
+        logger.info(f"✅ Obfuscated file written to s3://{bucket}/{output_key}")
+
+        return {
+            "statusCode": 200,
+            "body": f"Obfuscated file written to s3://{bucket}/{output_key}",
+        }
+
+    except S3ObjectNotFoundError as e:
+        logger.warning(f"Lambda: S3 object not found – {e.bucket}/{e.key}")
+        return {"statusCode": 404, "body": str(e)}
+
+    except Exception as e:
+        logger.exception("Unexpected error during Lambda execution")
+        return {"statusCode": 500, "body": f"Internal server error: {str(e)}"}
+
+
+############################################
 
 
 # -----------------------------
@@ -93,11 +202,17 @@ def main():
         else:
             print(obfuscated_data.decode("utf-8").encode().decode("unicode_escape"))
     except S3ObjectNotFoundError as e:
-        logger.warning(f"🛑 Skipping – file not found: {e.bucket}/{e.key}")
+        logger.warning(f"🛑 Skipping - file not found: {e.bucket}/{e.key}")
 
     except Exception as e:
         print(f"❌ Error: {e}")
 
 
 if __name__ == "__main__":
-    main()
+    test_event = {
+        "Records": [
+            {"s3": {"bucket": {"name": "test-bucket"}, "object": {"key": "sample.csv"}}}
+        ]
+    }
+
+    print(lambda_handler(test_event, context=None))

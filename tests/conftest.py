@@ -32,3 +32,8 @@ def s3_bucket():
         Bucket=bucket, CreateBucketConfiguration={"LocationConstraint": "eu-west-2"}
     )
     return bucket
+
+
+@pytest.fixture(autouse=True)
+def set_default_env(monkeypatch):
+    monkeypatch.setenv("ENV", "dev")

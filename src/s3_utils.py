@@ -2,16 +2,18 @@
 import boto3
 import re
 import os
-import logging
 import chardet
 from botocore.exceptions import ClientError
 from src.utils.logging_utils import setup_file_logger
 from src.exceptions import S3ObjectNotFoundError
+from typing import Union
 
 logger = setup_file_logger(__name__, "logs/s3_utils.log")
 
 
-def fetch_file_from_s3(s3_uri: str, encoding_override: str = None) -> str:
+def fetch_file_from_s3(
+    s3_uri: str, encoding_override: str = None, binary: bool = False
+) -> str:
     """
     Fetch a file from an S3 bucket using a boto3 client.
 
@@ -37,6 +39,9 @@ def fetch_file_from_s3(s3_uri: str, encoding_override: str = None) -> str:
 
     bucket, key = s3_uri.replace("s3://", "").split("/", 1)
     raw_data = safe_get_s3_object(s3, bucket, key)
+
+    if binary:
+        return raw_data  # ✅ return raw bytes as-is for Parquet
 
     # Use override if provided
     if encoding_override:
@@ -89,3 +94,14 @@ def safe_get_s3_object(s3, bucket: str, key: str) -> bytes:
             raise S3ObjectNotFoundError(bucket, key)
         else:
             raise
+
+
+def get_s3_client() -> boto3.client:
+    return boto3.client(
+        "s3",
+        region_name="eu-west-2",
+        endpoint_url=os.getenv("AWS_ENDPOINT_URL", None),
+        ## nosec in lines 34 and 35 tells Bandit to skip security checks on these lines.
+        aws_access_key_id="test",  # nosec
+        aws_secret_access_key="test",  # nosec
+    )

@@ -1,47 +1,12 @@
 # Handles obfuscation of PII fields in CSV:
+import pandas as pd
 import csv
 import io
-from typing import List
 import logging
+import json
+from typing import List, Union
 
 logger = logging.getLogger(__name__)
-
-
-# def obfuscate_csv(content: str, pii_fields: List[str]) -> bytes:
-#     # log events, but not content
-#     logger.info("Starting obfuscation of CSV content.")
-#     input_buffer = io.StringIO(content)
-#     reader = csv.DictReader(input_buffer)
-
-#     if not all(isinstance(f, str) for f in pii_fields):
-#         raise TypeError("All field names in pii_fields must be strings.")
-
-#     # Check for valid CSV header
-#     # Checks if header exists AND if the content has at least one comma (crude but helpful)
-#     # Converts reader to a list to confirm at least 1 row exists
-#     if not reader.fieldnames or any("," not in content for _ in range(1)):
-#         raise ValueError("Input does not appear to be valid CSV content.")
-
-#     # Additional: Must have at least 1 data row
-#     rows = list(reader)
-#     # If header exists but no data, just return header
-#     if not rows:
-#         output_buffer = io.StringIO()
-#         writer = csv.DictWriter(output_buffer, fieldnames=reader.fieldnames)
-#         writer.writeheader()
-#         return output_buffer.getvalue().encode("utf-8")
-
-#     output_buffer = io.StringIO()
-#     writer = csv.DictWriter(output_buffer, fieldnames=reader.fieldnames)
-#     writer.writeheader()
-
-#     for row in rows:
-#         for field in pii_fields:
-#             if field in row:
-#                 row[field] = "***"
-#         writer.writerow(row)
-
-#     return output_buffer.getvalue().encode("utf-8")
 
 # The following function handles:
 # Empty values ✅
@@ -93,3 +58,83 @@ def obfuscate_csv(content: str, pii_fields: List[str]) -> bytes:
         writer.writerow(row)
 
     return output_buffer.getvalue().encode("utf-8")
+
+
+# the following function:
+# Accepts a JSON string or JSON content from S3
+# Replaces values in specified pii_fields with '***'
+# Supports:
+# Single record (object)
+# List of records (list of objects)
+# Returns a UTF-8 encoded JSON string as bytes
+
+
+def obfuscate_json(content: Union[str, bytes], pii_fields: List[str]) -> bytes:
+    """
+    Obfuscates specified fields in a JSON object or list of objects.
+
+    Args:
+        content (str | bytes): JSON string or bytes from S3.
+        pii_fields (List[str]): Fields to obfuscate.
+
+    Returns:
+        bytes: Obfuscated JSON content encoded as UTF-8.
+    """
+    if isinstance(content, bytes):
+        content = content.decode("utf-8")
+
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError:
+        raise ValueError("Invalid JSON input")
+
+    def obfuscate_record(record: dict):
+        for field in pii_fields:
+            if field in record:
+                record[field] = "***"
+        return record
+
+    if isinstance(data, dict):
+        obfuscated = obfuscate_record(data)
+    elif isinstance(data, list):
+        if not all(isinstance(rec, dict) for rec in data):
+            raise ValueError("JSON list must contain objects (dicts only).")
+        obfuscated = [obfuscate_record(rec) for rec in data]
+    else:
+        raise ValueError("Unsupported JSON format (must be object or list of objects)")
+
+    return json.dumps(obfuscated, ensure_ascii=False, indent=2).encode("utf-8")
+
+
+def obfuscate_parquet(content: Union[bytes, str], pii_fields: List[str]) -> bytes:
+    """
+    Obfuscates PII fields in a Parquet file and returns as byte stream.
+
+    Args:
+        content (bytes): Parquet file content from S3.
+        pii_fields (List[str]): List of fields to obfuscate.
+
+    Returns:
+        bytes: Obfuscated Parquet file as byte stream.
+    """
+    logger.info("📦 Inside obfuscate_parquet")
+    logger.info(f"Received {len(content)} bytes")
+    if isinstance(content, str):
+        content = content.encode("utf-8")
+
+    buffer = io.BytesIO(content)
+    try:
+        df = pd.read_parquet(buffer, engine="pyarrow")
+        logger.info(f"📄 Read Parquet: {df.shape[0]} rows, {df.shape[1]} cols")
+    except Exception:
+        logger.exception("Failed to read parquet")
+        raise ValueError("Invalid Parquet format")
+
+    for field in pii_fields:
+        if field in df.columns:
+            df[field] = "***"
+
+    out_buffer = io.BytesIO()
+    df.to_parquet(out_buffer, index=False, engine="pyarrow")
+
+    return out_buffer.getvalue()

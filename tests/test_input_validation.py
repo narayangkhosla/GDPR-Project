@@ -52,9 +52,9 @@ def test_malformed_s3_uri():
         obfuscate_handler(input_json)
 
 
-def test_file_extension_not_csv():
+def test_file_extension_unsupported_type():
     input_json = (
-        '{"file_to_obfuscate": "s3://bucket/file.json", "pii_fields": ["email"]}'
+        '{"file_to_obfuscate": "s3://bucket/file.exe", "pii_fields": ["email"]}'
     )
     with pytest.raises(UnsupportedFormatError):
         obfuscate_handler(input_json)
