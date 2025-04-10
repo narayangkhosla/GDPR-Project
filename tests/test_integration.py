@@ -5,8 +5,8 @@
 # Downloads the result
 # Confirms the PII was correctly obfuscated
 
-from src.main import lambda_handler
-from src.s3_utils import get_s3_client
+from main import lambda_handler
+from s3_utils import get_s3_client
 
 # Mocks input file upload to S3
 # Triggers the lambda_handler() like a real S3 event

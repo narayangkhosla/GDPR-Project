@@ -14,3 +14,12 @@ venv/
 # Ignore log files
 logs/
 *.log
+.ruff_cache
+# Ignore build folder and its contents
+/build/
+
+# Ignore lambda layer preparation files
+/lambda_layer/
+
+# Ignore any generated .zip files for Lambda layers
+*.zip

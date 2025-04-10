@@ -1,9 +1,9 @@
 import boto3
 import pytest
 
-from src.s3_utils import fetch_file_from_s3
+from s3_utils import fetch_file_from_s3
 from unittest.mock import patch, MagicMock
-from src.exceptions import S3ObjectNotFoundError
+from exceptions import S3ObjectNotFoundError
 
 # @patch("boto3.client")
 # def test_fetch_file_from_s3(mock_boto):

@@ -1,7 +1,8 @@
 import json
+from unittest.mock import patch
 import pytest
-from src.main import lambda_handler
-from src.s3_utils import get_s3_client
+from main import lambda_handler
+from s3_utils import get_s3_client
 
 
 # I am using parameterization features and moto fixtures to simulate realistic S3 setups — including alternate buckets, field variations, and UTF-16/JSON formats.
@@ -51,13 +52,12 @@ def test_lambda_with_varied_fields(s3_bucket, pii_fields, csv_content, expected_
         ]
     }
 
-    # Patch obfuscate_handler to use dynamic fields
-    from unittest.mock import patch
+    from obfuscator import obfuscate_csv
 
-    with patch("src.main.obfuscate_handler") as mock_handler:
-        from src.obfuscator import obfuscate_csv
+    result = obfuscate_csv(csv_content, pii_fields)
 
-        result = obfuscate_csv(csv_content, pii_fields)
+    # ✅ Patch where obfuscate_handler is used (main.py)
+    with patch("main.obfuscate_handler") as mock_handler:
         mock_handler.return_value = result
         lambda_handler(event, context=None)
 

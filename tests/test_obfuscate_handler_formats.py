@@ -8,8 +8,8 @@
 import json
 import pandas as pd
 import io
-from src.main import lambda_handler
-from src.s3_utils import get_s3_client
+from main import lambda_handler
+from s3_utils import get_s3_client
 
 
 def test_lambda_json_file_obfuscates_successfully(s3_bucket):

@@ -1,3 +1,5 @@
+import sys
+import os
 import logging
 import pytest
 import uuid
@@ -37,3 +39,9 @@ def s3_bucket():
 @pytest.fixture(autouse=True)
 def set_default_env(monkeypatch):
     monkeypatch.setenv("ENV", "dev")
+
+
+# Add src/ to sys.path at runtime
+sys.path.insert(
+    0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
+)

@@ -4,7 +4,7 @@ import time
 import logging
 import pandas as pd
 import io
-from src.obfuscator import obfuscate_csv, obfuscate_json, obfuscate_parquet
+from obfuscator import obfuscate_csv, obfuscate_json, obfuscate_parquet
 
 
 def test_obfuscate_csv():

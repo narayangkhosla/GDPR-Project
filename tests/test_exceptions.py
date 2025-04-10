@@ -1,5 +1,5 @@
 import pytest
-from src.exceptions import S3ObjectNotFoundError
+from exceptions import S3ObjectNotFoundError
 
 
 # ✅Initialization, message content, attributes

@@ -3,11 +3,11 @@ import os
 import urllib.parse
 import argparse
 import json
-from src.s3_utils import fetch_file_from_s3, is_valid_s3_uri, get_s3_client
-from src.obfuscator import obfuscate_csv, obfuscate_json, obfuscate_parquet
-from src.exceptions import UnsupportedFormatError
-from src.utils.logging_utils import setup_file_logger
-from src.exceptions import S3ObjectNotFoundError
+from s3_utils import fetch_file_from_s3, is_valid_s3_uri, get_s3_client
+from obfuscator import obfuscate_csv, obfuscate_json, obfuscate_parquet
+from exceptions import UnsupportedFormatError
+from utils.logging_utils import setup_file_logger
+from exceptions import S3ObjectNotFoundError
 
 logger = setup_file_logger(__name__, "logs/main.log")
 

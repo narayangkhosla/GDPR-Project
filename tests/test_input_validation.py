@@ -1,6 +1,6 @@
 import pytest
-from src.main import obfuscate_handler
-from src.exceptions import UnsupportedFormatError
+from main import obfuscate_handler
+from exceptions import UnsupportedFormatError
 
 
 # Invalid JSON input

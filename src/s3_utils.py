@@ -4,8 +4,8 @@ import re
 import os
 import chardet
 from botocore.exceptions import ClientError
-from src.utils.logging_utils import setup_file_logger
-from src.exceptions import S3ObjectNotFoundError
+from utils.logging_utils import setup_file_logger
+from exceptions import S3ObjectNotFoundError
 
 logger = setup_file_logger(__name__, "logs/s3_utils.log")
 
