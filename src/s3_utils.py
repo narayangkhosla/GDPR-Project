@@ -25,7 +25,8 @@ def fetch_file_from_s3(
     Raises:
         FileNotFoundError: If the file does not exist.
     """
-    endpoint_url = os.getenv("AWS_ENDPOINT_URL", "http://localhost:4566")
+    # endpoint_url = os.getenv("AWS_ENDPOINT_URL", "http://localhost:4566")
+    endpoint_url = os.getenv("AWS_ENDPOINT_URL", None)
 
     s3 = boto3.client(
         "s3",
@@ -96,10 +97,16 @@ def safe_get_s3_object(s3, bucket: str, key: str) -> bytes:
 
 
 def get_s3_client() -> boto3.client:
+    endpoint_url = os.getenv("AWS_ENDPOINT_URL")
+
+    if endpoint_url:
+        print(f"Using LocalStack or custom S3 endpoint: {endpoint_url}")
+    else:
+        print("Using real AWS S3")
     return boto3.client(
         "s3",
         region_name="eu-west-2",
-        endpoint_url=os.getenv("AWS_ENDPOINT_URL", None),
+        endpoint_url=endpoint_url,
         ## nosec in lines 34 and 35 tells Bandit to skip security checks on these lines.
         aws_access_key_id="test",  # nosec
         aws_secret_access_key="test",  # nosec
