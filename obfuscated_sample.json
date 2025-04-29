@@ -1,0 +1,82 @@
+[
+  {
+    "student_id": 7576,
+    "name": "***",
+    "course": "Engineering",
+    "cohort": "2024",
+    "graduation_date": "2025-06-10",
+    "email_address": "***"
+  },
+  {
+    "student_id": 9594,
+    "name": "***",
+    "course": "Data Science",
+    "cohort": "2025",
+    "graduation_date": "2025-12-01",
+    "email_address": "***"
+  },
+  {
+    "student_id": 4541,
+    "name": "***",
+    "course": "Cyber Security",
+    "cohort": "2024",
+    "graduation_date": "2025-05-15",
+    "email_address": "***"
+  },
+  {
+    "student_id": 2827,
+    "name": "***",
+    "course": "Engineering",
+    "cohort": "2025",
+    "graduation_date": "2024-07-20",
+    "email_address": "***"
+  },
+  {
+    "student_id": 2423,
+    "name": "***",
+    "course": "Data Science",
+    "cohort": "2024",
+    "graduation_date": "2024-09-05",
+    "email_address": "***"
+  },
+  {
+    "student_id": 3859,
+    "name": "***",
+    "course": "Cloud Computing",
+    "cohort": "2024",
+    "graduation_date": "2024-09-05",
+    "email_address": "***"
+  },
+  {
+    "student_id": 7066,
+    "name": "***",
+    "course": "Analytics",
+    "cohort": "2025",
+    "graduation_date": "2024-07-20",
+    "email_address": "***"
+  },
+  {
+    "student_id": 4395,
+    "name": "***",
+    "course": "Data Science",
+    "cohort": "2025",
+    "graduation_date": "2024-09-05",
+    "email_address": "***"
+  },
+  {
+    "student_id": 5578,
+    "name": "***",
+    "course": "Data Science",
+    "cohort": "2025",
+    "graduation_date": "2025-05-15",
+    "email_address": "***"
+  },
+  {
+    "student_id": 2419,
+    "name": "***",
+    "course": "Cyber Security",
+    "cohort": "2024",
+    "graduation_date": "2025-06-10",
+    "email_address": "***"
+  }
+]

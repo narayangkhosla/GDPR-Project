@@ -25,7 +25,7 @@ def fetch_file_from_s3(
     Raises:
         FileNotFoundError: If the file does not exist.
     """
-    endpoint_url = os.getenv("AWS_ENDPOINT_URL", None)
+    endpoint_url = os.getenv("AWS_ENDPOINT_URL", "http://localhost:4566")
 
     s3 = boto3.client(
         "s3",

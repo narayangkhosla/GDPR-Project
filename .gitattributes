@@ -1,0 +1,24 @@
+# Pattern	Meaning
+# *.py text eol=lf	Always use LF (Unix-style) for Python files
+# *.json text eol=lf	Use LF for JSON
+# *.csv text eol=lf	Use LF for CSV
+# *.parquet binary	Prevent Git from altering binary files
+# *.ps1 text eol=lf	LF for PowerShell scripts (still works fine in Windows)
+# *.bat text eol=crlf	Keep CRLF for batch files (Windows native)
+
+# Enforce LF line endings for code and data files
+*.py     text eol=lf
+*.json   text eol=lf
+*.csv    text eol=lf
+*.parquet binary
+*.log    text eol=lf
+*.sh     text eol=lf
+*.ps1    text eol=lf
+*.bat    text eol=crlf
+
+# Treat parquet files as binary (no line endings)
+*.parquet binary
+
+# Explicitly declare text files
+*.md     text
+*.txt    text

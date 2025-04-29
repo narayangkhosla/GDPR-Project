@@ -200,7 +200,9 @@ def main():
                 f.write(obfuscated_data)
             print(f"Obfuscated file written to {args.output}")
         else:
-            print(obfuscated_data.decode("utf-8").encode().decode("unicode_escape"))
+            print("=== Obfuscated Data Output ===")
+            # print(obfuscated_data.decode("utf-8").encode().decode("unicode_escape"))
+            print(obfuscated_data.decode("utf-8"))
     except S3ObjectNotFoundError as e:
         logger.warning(f"🛑 Skipping - file not found: {e.bucket}/{e.key}")
 
@@ -214,5 +216,33 @@ if __name__ == "__main__":
             {"s3": {"bucket": {"name": "test-bucket"}, "object": {"key": "sample.csv"}}}
         ]
     }
+    import sys
 
+    # sys.argv = [
+    #     "main.py",
+    #     "--s3",
+    #     "s3://test-bucket/sample1.csv",
+    #     "--fields",
+    #     "name",
+    #     "email_address",
+    # ]
+    # sys.argv = [
+    #     "main.py",
+    #     "--s3",
+    #     "s3://test-bucket/sample.json",
+    #     "--fields",
+    #     "name",
+    #     "email_address",
+    # ]
+    # sys.argv = [
+    #     "main.py",
+    #     "--s3",
+    #     "s3://test-bucket/sample.parquet",
+    #     "--fields",
+    #     "name",
+    #     "email_address",
+    #     "--output",
+    #     "obfuscated_sample.parquet",
+    # ]
+    main()
     # print(lambda_handler(test_event, context=None))
