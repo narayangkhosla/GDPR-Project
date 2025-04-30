@@ -1,4 +1,5 @@
-# The purpose is to direct S3 integration tests that simulate a real Lambda-style invocation and verify that the obfuscator:
+# The purpose is to direct S3 integration tests that simulate
+# a real Lambda-style invocation and verify that the obfuscator:
 
 # ✅ Reads from S3
 # ✅ Detects the correct file format
@@ -8,7 +9,7 @@
 import json
 import pandas as pd
 import io
-from main import lambda_handler, obfuscate_handler
+from main import obfuscate_handler
 from s3_utils import get_s3_client
 
 

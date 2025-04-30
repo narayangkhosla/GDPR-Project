@@ -21,7 +21,6 @@ def test_lambda_obfuscates_and_saves_to_s3(s3_bucket):
     s3 = get_s3_client()
     input_key = "sample.csv"
     output_key = "obfuscated/sample.csv"
-    pii_fields = ["name", "email"]
 
     # Original CSV content
     csv_content = "id,name,email\n1,John,john@example.com\n2,Jane,jane@example.com"

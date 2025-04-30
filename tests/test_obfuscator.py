@@ -180,7 +180,6 @@ def test_csv_with_quoted_headers():
     assert "john@example.com" not in result
 
 
-##### for obfuscate_json #######
 # Valid JSON list of objects
 def test_obfuscate_json_list_of_objects():
     input_data = json.dumps(

@@ -5,14 +5,15 @@ from main import lambda_handler
 from s3_utils import get_s3_client
 
 
-# I am using parameterization features and moto fixtures to simulate realistic S3 setups — including alternate buckets, field variations, and UTF-16/JSON formats.
+# I am using parameterization features and moto fixtures
+# to simulate realistic S3 setups — including alternate buckets,
+# field variations, and UTF-16/JSON formats.
 @pytest.mark.parametrize(
     "input_key", ["sample.csv", "uploads/data.csv", "nested/path/file.csv"]
 )
 def test_lambda_with_varied_filenames(s3_bucket, input_key):
     s3 = get_s3_client()
     output_key = f"obfuscated/{input_key.split('/')[-1]}"
-    pii_fields = ["name", "email"]
     csv_content = "id,name,email\n1,Alice,alice@example.com"
 
     s3.put_object(Bucket=s3_bucket, Key=input_key, Body=csv_content)
@@ -79,7 +80,7 @@ def test_lambda_utf16_encoded_file(s3_bucket):
         ]
     }
 
-    response = lambda_handler(event, context=None)
+    lambda_handler(event, context=None)
     result = (
         s3.get_object(Bucket=s3_bucket, Key=output_key)["Body"].read().decode("utf-8")
     )

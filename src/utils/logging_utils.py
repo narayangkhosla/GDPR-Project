@@ -46,8 +46,8 @@ import os
 
 def setup_file_logger(name: str, log_file: str, level=logging.INFO) -> logging.Logger:
     """
-    Creates a logger that logs to a file. If the default path is not writable (like in Lambda),
-    it falls back to /tmp/log_name.log
+    Creates a logger that logs to a file. If the default path is not writable
+    (like in Lambda), it falls back to /tmp/log_name.log
     """
     # If logs/ is not writable (like in Lambda), redirect to /tmp/
     if not os.access(os.path.dirname(log_file), os.W_OK):

@@ -44,12 +44,12 @@ def test_fetch_file_from_s3(s3_bucket):
 
 
 def test_fetch_file_from_s3_file_not_found(s3_bucket, caplog):
-    s3 = boto3.client("s3", region_name="eu-west-2")
+    boto3.client("s3", region_name="eu-west-2")
     key = "missing.csv"
     s3_uri = f"s3://{s3_bucket}/{key}"
 
     with caplog.at_level("ERROR"):
-        with pytest.raises(S3ObjectNotFoundError) as exc_info:
+        with pytest.raises(S3ObjectNotFoundError):
             fetch_file_from_s3(s3_uri)
     assert "Missing file" in caplog.text
 

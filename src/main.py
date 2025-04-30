@@ -78,7 +78,8 @@ def obfuscate_handler(json_input: str, encoding_override: str = None) -> bytes:
     # return obfuscate_csv(file_data, pii_fields)
 
 
-############### LAMBDA HANDLER #############
+# LAMBDA HANDLER
+
 # A basic Lambda setup for this project would:
 # Receive an event (e.g., from S3 trigger or Step Function)
 # Parse the S3 URI and PII fields from the event payload
@@ -129,7 +130,8 @@ def lambda_handler(event, context):
                 s3.head_object(Bucket=bucket, Key=output_key)
                 # If no exception: the object exists → don't overwrite
                 logger.warning(
-                    f"⚠️ Output file already exists at s3://{bucket}/{output_key}. Skipping write."
+                    "⚠️ Output file already exists at "
+                    f"s3://{bucket}/{output_key}. Skipping write."
                 )
                 return {
                     "statusCode": 409,
@@ -216,7 +218,6 @@ if __name__ == "__main__":
             {"s3": {"bucket": {"name": "test-bucket"}, "object": {"key": "sample.csv"}}}
         ]
     }
-    import sys
 
     # sys.argv = [
     #     "main.py",

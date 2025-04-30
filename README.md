@@ -103,12 +103,12 @@ Sample tests:
 | Output S3 write logic in handler | ❌ | Done by caller, not the handler (by design) |
 
 ### 🧰 Design Principles
-- Input: JSON with file_to_obfuscate and pii_fields
-- Output: Byte stream with obfuscated fields
-- File Types: .csv, .json, .parquet
-- Field Redaction: "***" for specified fields
-- Encoding: Auto-detected or override via --encoding
-- Error Handling: Custom exceptions for unsupported formats, bad URIs, missing files
+- **Input**: JSON with file_to_obfuscate and pii_fields
+- **Output**: Byte stream with obfuscated fields
+- **File Types**: .csv, .json, .parquet
+- **Field Redaction**: "***" for specified fields
+- **Encoding**: Auto-detected or override via --encoding
+- **Error Handling**: Custom exceptions for unsupported formats, bad URIs, missing files
 
 ### 📝 License
 This project is provided for internal and educational use. Licensing terms can be defined as needed.

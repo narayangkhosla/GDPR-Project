@@ -55,7 +55,8 @@ def fetch_file_from_s3(
 
     if confidence < 0.7:
         logger.warning(
-            f"⚠️ Low confidence in encoding detection ({confidence:.2f}). Proceeding with {encoding}."
+            f"⚠️ Low confidence in encoding detection ({confidence:.2f}). "
+            "Proceeding with {encoding}."
         )
 
     logger.info(f"Detected file encoding: {encoding} (confidence: {confidence:.2f})")
@@ -89,7 +90,8 @@ def safe_get_s3_object(s3, bucket: str, key: str) -> bytes:
         error_code = e.response["Error"]["Code"]
         if error_code == "NoSuchKey":
             logger.error(
-                f"📁 Missing file: '{key}' in bucket: '{bucket}' - S3 returned NoSuchKey."
+                f"📁 Missing file: '{key}' in bucket: '{bucket}' "
+                "- S3 returned NoSuchKey."
             )
             raise S3ObjectNotFoundError(bucket, key)
         else:
@@ -107,7 +109,7 @@ def get_s3_client() -> boto3.client:
         "s3",
         region_name="eu-west-2",
         endpoint_url=endpoint_url,
-        ## nosec in lines 34 and 35 tells Bandit to skip security checks on these lines.
+        # nosec in lines 34 and 35 tells Bandit to skip security checks on these lines.
         aws_access_key_id="test",  # nosec
         aws_secret_access_key="test",  # nosec
     )
