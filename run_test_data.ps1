@@ -11,8 +11,10 @@ $env:AWS_SECRET_ACCESS_KEY = "test"
 $env:AWS_DEFAULT_REGION = "eu-west-2"
 $env:AWS_ENDPOINT_URL = "http://localhost:4566"
 
-# Default bucket name
+# Default values
 $bucket = "test-bucket"
+$outputPrefix = "obfuscated_sample_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
+$extensions = @("csv", "json", "parquet")
 
 Write-Host "`nChecking if bucket '$bucket' exists..."
 $bucketExists = awslocal s3 ls | Select-String $bucket
@@ -40,13 +42,16 @@ awslocal s3 cp sample.json "s3://$bucket/sample.json"
 awslocal s3 cp sample.parquet "s3://$bucket/sample.parquet"
 
 Write-Host "`n=== Running CLI for CSV ==="
-python .\src\main.py --s3 "s3://$bucket/sample.csv" --fields name email_address --output obfuscated_sample.csv
+python .\src\main.py --s3 "s3://$bucket/sample.csv" --fields name email_address --output "$outputPrefix.csv"
 
 Write-Host "`n=== Running CLI for JSON ==="
-python .\src\main.py --s3 "s3://$bucket/sample.json" --fields name email_address --output obfuscated_sample.json
+python .\src\main.py --s3 "s3://$bucket/sample.json" --fields name email_address --output "$outputPrefix.json"
 
 Write-Host "`n=== Running CLI for Parquet ==="
-python .\src\main.py --s3 "s3://$bucket/sample.parquet" --fields name email_address --output obfuscated_sample.parquet
+python .\src\main.py --s3 "s3://$bucket/sample.parquet" --fields name email_address --output "$outputPrefix.parquet"
 
-Write-Host "`n=== DONE ==="
-Read-Host "Press ENTER to exit"
+Write-Host "`n================================================"
+foreach ($ext in $extensions) {
+    Write-Host "The obfuscated $ext data has been written to $outputPrefix.$ext"
+}
+Write-Host "`n=== Process Complete ==="

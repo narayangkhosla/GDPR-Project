@@ -54,6 +54,6 @@ python create_test_data.py
 # Clean up
 Remove-Item "create_test_data.py" -Force
 
-Write-Host "`n✅ Created randomized sample.csv, sample.json, sample.parquet"
+Write-Host "`nCreated randomized sample.csv, sample.json, sample.parquet"
 Write-Host "=== Test data is ready! ==="
 

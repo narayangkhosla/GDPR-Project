@@ -1,82 +1,82 @@
 [
   {
     "student_id": 8071,
-    "name": "Charlie Nguyen",
+    "name": "***",
     "course": "AI",
     "cohort": "2024",
     "graduation_date": "2025-12-01",
-    "email_address": "charlie.nguyen@test.com"
+    "email_address": "***"
   },
   {
     "student_id": 4636,
-    "name": "Hannah Nguyen",
+    "name": "***",
     "course": "Data Science",
     "cohort": "2024",
     "graduation_date": "2024-07-20",
-    "email_address": "hannah.nguyen@test.com"
+    "email_address": "***"
   },
   {
     "student_id": 1263,
-    "name": "Hannah Smith",
+    "name": "***",
     "course": "Engineering",
     "cohort": "2025",
     "graduation_date": "2025-05-15",
-    "email_address": "hannah.smith@test.com"
+    "email_address": "***"
   },
   {
     "student_id": 9837,
-    "name": "Hannah Prince",
+    "name": "***",
     "course": "Data Science",
     "cohort": "2024",
     "graduation_date": "2025-12-01",
-    "email_address": "hannah.prince@test.com"
+    "email_address": "***"
   },
   {
     "student_id": 1997,
-    "name": "Bob Taylor",
+    "name": "***",
     "course": "Cyber Security",
     "cohort": "2024",
     "graduation_date": "2024-09-05",
-    "email_address": "bob.taylor@test.com"
+    "email_address": "***"
   },
   {
     "student_id": 1165,
-    "name": "Bob Hunt",
+    "name": "***",
     "course": "Analytics",
     "cohort": "2024",
     "graduation_date": "2024-09-05",
-    "email_address": "bob.hunt@test.com"
+    "email_address": "***"
   },
   {
     "student_id": 8786,
-    "name": "Ethan Johnson",
+    "name": "***",
     "course": "Software",
     "cohort": "2024",
     "graduation_date": "2024-09-05",
-    "email_address": "ethan.johnson@test.com"
+    "email_address": "***"
   },
   {
     "student_id": 6098,
-    "name": "Charlie Prince",
+    "name": "***",
     "course": "Engineering",
     "cohort": "2025",
     "graduation_date": "2024-09-05",
-    "email_address": "charlie.prince@test.com"
+    "email_address": "***"
   },
   {
     "student_id": 4299,
-    "name": "Diana Hunt",
+    "name": "***",
     "course": "Cloud Computing",
     "cohort": "2024",
     "graduation_date": "2024-11-22",
-    "email_address": "diana.hunt@test.com"
+    "email_address": "***"
   },
   {
     "student_id": 3789,
-    "name": "Fiona Clark",
+    "name": "***",
     "course": "AI",
     "cohort": "2025",
     "graduation_date": "2025-05-15",
-    "email_address": "fiona.clark@test.com"
+    "email_address": "***"
   }
 ]

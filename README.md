@@ -45,6 +45,37 @@ project-root/ │ ├── src/ # All source code │ ├── main.py # CLI +
 | Lambda handler | ❌ (deliberately excluded in MVP) |
 
 ---
+## 🚀 How to Run the Program
+The project provides two PowerShell scripts to help you test the obfuscation workflow from start to finish using local data and LocalStack S3.
+#### 1. 📦 Generate Sample Test Data: 
+Run this script to create test files containing sample Personal Identifiable Information (PII):
+
+    .\create_test_data.ps1
+
+This will generate the below files (at the project/root level):
+- sample.csv
+- sample.json
+- sample.parquet
+
+#### 2. 🧪 **Run the Obfuscation Workflow**: 
+Run this script to:
+- Upload the sample files to your LocalStack S3 bucket
+- Obfuscate the selected PII fields
+- Save the results to local output file
+
+        .\run_test_data.ps1
+
+By default, the output files will be named using a timestamp for easy versioning:
+
+- `obfuscated_sample_YYYYMMDD_HHMMSS.csv`
+- `obfuscated_sample_YYYYMMDD_HHMMSS.json`
+- `obfuscated_sample_YYYYMMDD_HHMMSS.parquet`
+
+Example:
+obfuscated_sample_20250430_193557.csv
+
+You’ll also see confirmation messages like:
+`"The obfuscated csv data has been written to obfuscated_sample_20250430_193557.csv"`
 
 ## ⚙️ Setup
 
@@ -115,3 +146,18 @@ This project is provided for internal and educational use. Licensing terms can b
 
 ### 🙋 Support & Contributions
 Have ideas, bugs, or suggestions? Open a GitHub issue or start a discussion!
+
+## 🧹 Files Not Relevant to MVP
+
+During initial development, several deployment and Lambda-related files were created. However, these are **not required** to meet the MVP and can be ignored for the purpose of technical review.
+
+The following files are safe to skip:
+
+- `create-f.ps1`, `deploy_new.ps1`, `invoke.ps1`
+- `create-layer.ps1`, `publish-layer.bat`
+- `event.json`, `output.json`
+- `deployment-requirements.txt`
+- `pytest.ini`
+
+These were part of an **early prototype** for AWS Lambda integration and are included here for reference only.  
+👉 The project meets the MVP using the CLI, LocalStack, and handler-based testing with no Lambda code required.
