@@ -77,6 +77,27 @@ obfuscated_sample_20250430_193557.csv
 You’ll also see confirmation messages like:
 `"The obfuscated csv data has been written to obfuscated_sample_20250430_193557.csv"`
 
+## ✅ Running Tests with Pytest
+All unit and functional tests are written using Pytest and located in the tests/ folder.
+
+To run the relevant tests (excluding Lambda-related files), use 
+
+a. this command if you are in the `tests\` folder:
+
+    pytest -v @(Get-ChildItem -Recurse -Filter "test_*.py" | Where-Object {
+        $_.Name -notin @("test_integration.py", "test_lambda_end_to_end.py")
+    } | ForEach-Object { $_.FullName })
+
+b. this command if you are in the `project\` folder:
+
+    pytest -v @(Get-ChildItem -Recurse -Path "tests" -Filter "test_*.py" | Where-Object {
+    $_.Name -notin @("test_integration.py", "test_lambda_end_to_end.py")
+    } | ForEach-Object { $_.FullName })    
+
+Both of the above commands will:
+- ✅ Run all test files matching test_*.py
+- ❌ Exclude test_integration.py and test_lambda_end_to_end.py, which are related to Lambda-based functionality that is not part of the MVP.
+
 ## ⚙️ Setup
 
 ### ✅ 1. Install Requirements
