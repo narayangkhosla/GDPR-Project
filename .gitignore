@@ -23,3 +23,5 @@ logs/
 
 # Ignore any generated .zip files for Lambda layers
 *.zip
+
+.python-version

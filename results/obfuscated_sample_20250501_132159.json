@@ -1,82 +1,82 @@
 [
   {
     "student_id": 2216,
-    "name": "Name0",
+    "name": "***",
     "course": "Course0",
     "cohort": "2024",
     "graduation_date": "2025-01-15",
-    "email_address": "name0@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 1141,
-    "name": "Name1",
+    "name": "***",
     "course": "Course1",
     "cohort": "2025",
     "graduation_date": "2025-02-15",
-    "email_address": "name1@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 6208,
-    "name": "Name2",
+    "name": "***",
     "course": "Course2",
     "cohort": "2024",
     "graduation_date": "2025-03-15",
-    "email_address": "name2@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 5841,
-    "name": "Name3",
+    "name": "***",
     "course": "Course0",
     "cohort": "2025",
     "graduation_date": "2025-04-15",
-    "email_address": "name3@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 5622,
-    "name": "Name4",
+    "name": "***",
     "course": "Course1",
     "cohort": "2024",
     "graduation_date": "2025-05-15",
-    "email_address": "name4@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 9601,
-    "name": "Name5",
+    "name": "***",
     "course": "Course2",
     "cohort": "2025",
     "graduation_date": "2025-06-15",
-    "email_address": "name5@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 2138,
-    "name": "Name6",
+    "name": "***",
     "course": "Course0",
     "cohort": "2024",
     "graduation_date": "2025-07-15",
-    "email_address": "name6@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 7756,
-    "name": "Name7",
+    "name": "***",
     "course": "Course1",
     "cohort": "2025",
     "graduation_date": "2025-08-15",
-    "email_address": "name7@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 1708,
-    "name": "Name8",
+    "name": "***",
     "course": "Course2",
     "cohort": "2024",
     "graduation_date": "2025-09-15",
-    "email_address": "name8@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 4166,
-    "name": "Name9",
+    "name": "***",
     "course": "Course0",
     "cohort": "2025",
     "graduation_date": "2025-010-15",
-    "email_address": "name9@example.com"
+    "email_address": "***"
   }
 ]
