@@ -1,0 +1,63 @@
+﻿
+# test_bandit_scan.py
+- test_bandit_scan
+- test_bandit_scan
+
+# test_exceptions.py
+- test_s3_object_not_found_error_message
+- test_s3_object_not_found_error_raises
+
+# test_input_validation.py
+- test_empty_file_path
+- test_empty_pii_fields_list
+- test_file_extension_unsupported_type
+- test_invalid_json_input
+- test_malformed_s3_uri
+- test_missing_file_key
+- test_missing_pii_fields_key
+- test_pii_fields_not_a_list
+
+# test_obfuscate_handler_formats.py
+- test_csv_file_obfuscates_successfully
+- test_json_file_obfuscates_successfully
+- test_lambda_json_file_obfuscates_successfully
+- test_lambda_parquet_file_obfuscates_successfully
+- test_parquet_file_obfuscates_successfully
+
+# test_obfuscator.py
+- test_csv_with_missing_values
+- test_csv_with_only_headers
+- test_csv_with_quoted_headers
+- test_field_already_obfuscated
+- test_field_case_sensitivity
+- test_field_not_in_header
+- test_field_value_is_empty
+- test_json_field_case_insensitivity
+- test_multiple_rows
+- test_no_fields_to_obfuscate
+- test_no_pii_logged_during_obfuscation
+- test_obfuscate_csv
+- test_obfuscate_handler_json
+- test_obfuscate_handler_parquet
+- test_obfuscate_json_invalid_json
+- test_obfuscate_json_invalid_structure
+- test_obfuscate_json_list_of_objects
+- test_obfuscate_json_missing_fields
+- test_obfuscate_json_single_object
+- test_obfuscate_non_csv_input
+- test_obfuscate_parquet_invalid_format
+- test_obfuscate_parquet_valid
+- test_obfuscate_returns_bytes
+- test_obfuscate_specified_fields_only
+- test_obfuscation_under_1mb_and_1_minute
+- test_parquet_field_case_insensitivity
+- test_pii_fields_with_non_string_entries
+- test_pii_fields_with_spaces
+
+# test_s3_utils.py
+- test_fetch_file_from_s3
+- test_fetch_file_from_s3
+- test_fetch_file_from_s3
+- test_fetch_file_from_s3_file_not_found
+- test_fetch_file_with_encoding_override
+- test_logs_encoding_detected
