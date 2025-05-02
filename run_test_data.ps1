@@ -36,7 +36,7 @@ $bucket = "test-bucket"
 $outputPrefix = "obfuscated_sample_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
 $extensions = @("csv", "json", "parquet")
 $resultsPath = "./results"
-$fields = @("name1", "email_address")
+$fields = @("name", "email_address")
 
 # Ensure results directory exists and is empty
 if (Test-Path $resultsPath) {
