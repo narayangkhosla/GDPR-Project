@@ -13,8 +13,18 @@ Supports:
 
 ## Tech Stack
 
-- Programming Language: Python
-- Libraries: Pandas, Numpy, Boto3, Pytest, PyArrow
+- **Programming Language**: Python 3.13.2
+- **Core Libraries**: Pandas, Numpy, Boto3, PyArrow
+- **Testing Framework:** Pytest
+- **AWS Services (via LocalStack):** S3, Lambda
+- **Code Quality & Security Tools:** 
+  - Ruff (linting and auto-fixing)
+  - Flake8 (style checks)
+  - Black (code formatter)
+  - Bandit (security scanning)
+- **Environment Management:** `venv` (Python built-in)
+- **Shell Scripts:** Bash (`.sh`) and PowerShell (`.ps1`)
+- **Version Control:** Git + GitHub
 
 ## ✨ Features
 
@@ -31,7 +41,7 @@ Supports:
 
 ## 📁 Project Structure
 
-project-root/ │ ├── src/ # All source code │ ├── main.py # CLI + core handler (MVP entry point) │ ├── obfuscator.py # Logic for obfuscating CSV, JSON, Parquet │ ├── s3_utils.py # Handles S3 fetch/upload │ ├── exceptions.py # Custom error handling │ └── logging_utils.py # Configures file + console loggers │ ├── tests/ # Pytest test suite (no Lambda, pure handler-based) │ ├── create_test_data.ps1 # Generates randomized sample.csv, .json, .parquet ├── run_tests.ps1 # End-to-end local test runner using LocalStack ├── read_parq_file.py # Reads and prints obfuscated Parquet output ├── requirements.txt # Python dependencies └── .gitattributes # Line ending consistency across OSs
+project-root/ │ ├── src/ # All source code │ ├── main.py # CLI + core handler (MVP entry point) │ ├── obfuscator.py # Logic for obfuscating CSV, JSON, Parquet │ ├── s3_utils.py # Handles S3 fetch/upload │ ├── exceptions.py # Custom error handling │ └── logging_utils.py # Configures file + console loggers │ ├── tests/ # Pytest test suite (no Lambda, pure handler-based) │ ├── create_test_data.ps1 # Generates randomized sample.csv, .json, .parquet ├── run_test_data.ps1 # End-to-end local test runner using LocalStack ├── read_parq_file.py # Reads and prints obfuscated Parquet output ├── requirements.txt # Python dependencies └── .gitattributes # Line ending consistency across OSs
 
 ---
 
@@ -51,9 +61,13 @@ project-root/ │ ├── src/ # All source code │ ├── main.py # CLI +
 
 ## 🚀 How to Run the Program
 
+### <u>If you are on a WINDOWS machine, perform the following steps:</u>
 The project provides two PowerShell scripts to help you test the obfuscation workflow from start to finish using local data and LocalStack S3.
+#### Step 1. 📦 Create and activate your virtual environment:
+    python -m venv .venv
+    .venv\Scripts\Activate.ps1 
 
-#### 1. 📦 Generate Sample Test Data:
+#### Step 2. 📦 Generate Sample Test Data:
 
 Run this script to create test files containing sample Personal Identifiable Information (PII):
 
@@ -65,15 +79,59 @@ This will generate the below files (at the project/root level):
 - sample.json
 - sample.parquet
 
-#### 2. 🧪 **Run the Obfuscation Workflow**:
+#### Step 3. 🧪 **Run the Obfuscation Workflow**:
 
 Run this script to:
 
 - Upload the sample files to your LocalStack S3 bucket
 - Obfuscate the selected PII fields
-- Save the results to local output file
+- Save the results to local output file(s)
 
         .\run_test_data.ps1
+
+### ⚙️ Using .\run_test_data.ps1
+
+📝 Field Specification
+You can specify the fields to obfuscate using a comma-separated string(s):
+
+    $fields = @("name", "email_address")
+
+These fields are passed to the CLI using the --fields argument.
+
+✅ Smart Obfuscation Logic
+The script uses intelligent logic to ensure only meaningful files are written:
+
+- ✅ **If all specified fields match:**
+    All matching fields are obfuscated, and a success message is shown, for example:
+        
+        Obfuscated file written to ./results/obfuscated_sample_20250502_155814.csv
+
+- ⚠️ **If some fields match, and some don’t:**
+    Only the valid fields are obfuscated, and a warning is printed listing the non-matching fields. For example, if I had passed name1 (instead of name), email_address, it will obfuscate email_address, and leave rest as is.
+
+        ⚠️Some PII fields were not found in JSON: name1
+
+        Obfuscated file written to ./results/obfuscated_sample_20250502_161335.csv
+
+- ❌ **If none of the fields match:**
+    The obfuscator skips writing the output file, and prints a clear error message in the terminal, for example:
+
+        ⚠️ None of the specified PII fields were found in the CSV file.
+
+        ❌ Error: No matching PII fields found — obfuscation skipped.
+
+### <u>If you are on a MAC machine, perform the following steps:</u>
+#### Step 1. 📦 Create and activate your virtual environment:
+    python -m venv .venv
+    source .venv/bin/activate
+
+#### Step 2. 📦 Run the following script:
+    bash ./bootstrap_project.sh
+
+This purpose of this file is to:
+- Install all dependencies
+- Make helper scripts (i.e., create_test_data.sh, run_test_data.sh, check_pep8.sh, run-pytest-mac.sh) executable
+- Verify that LocalStack is running
 
 By default, All obfuscated files are saved in a dedicated `results/` folder:
 
@@ -85,13 +143,32 @@ Example:
 obfuscated_sample_20250430_193557.csv
 
 You’ll also see confirmation messages like:
-`"The obfuscated csv data has been written to obfuscated_sample_20250430_193557.csv"`
+`"The obfuscated csv data has been written to resuts/obfuscated_sample_20250430_193557.csv"`
+
+### 🔍 <u>Checking the Output</u>
+
+Check the `results/` folder.
+
+- For both **CSV** and **JSON** files, you can simply open them directly to view the obfuscated data.
+- For **Parquet** files, use the following command to preview the obfuscated output:
+
+    ```bash
+    python read_parq_file.py
+    ```
+
+    This will automatically detect and read the **most recently generated** Parquet file from the `results/` folder.
+
+    💡 To view a specific file, use the `--file` argument (just the filename, no path needed):
+
+    ```bash
+    python read_parq_file.py --file obfuscated_sample_20250501_132159.parquet
+    ```
 
 ## ✅ Running Tests with Pytest
 
 All unit and functional tests are written using Pytest and located in the tests/ folder.
 
-### WINDOWS:
+### <u>On a WINDOWS machine:</u>
 
 To run the relevant tests (excluding Lambda-related files), use
 
@@ -107,7 +184,7 @@ b. this command if you are in the `project\` folder:
     $_.Name -notin @("test_integration.py", "test_lambda_end_to_end.py")
     } | ForEach-Object { $_.FullName })
 
-### MAC:
+### <u>On a MAC machine, Run:</u>
 
 a. this command if you are in the `tests\` folder:
 
@@ -135,28 +212,14 @@ This tool is tested using LocalStack.
     localstack start
 
 ### 🧪 3. Generate Test Data
-
-Creates randomized data in:
-
-- sample.csv
-- sample.json
-- sample.parquet
-  .\create_test_data.ps1
+Refer to the above mentioned steps, depending on the Operating System. 
 
 ### 🛠️ 4. Run End-to-End Obfuscation Tests
-
-Uploads test files to S3, invokes CLI, and writes results:
-
-    .\run_tests.ps1
-
-Output includes:
-
-- Obfuscated console output (for CSV & JSON)
-- obfuscated_sample.parquet (for Parquet)
+Refer to the above mentioned steps, depending on the Operating System. 
 
 ### 🔍 5. Inspect Parquet Output (Optional)
 
-    python read_parq_file.py obfuscated_sample.parquet
+    python read_parq_file.py 
 
 ### 💻 CLI Usage
 
@@ -167,9 +230,6 @@ Output includes:
     --encoding <utf-8|utf-16|latin-1> – force specific file encoding
 
 ### 🧪 Testing
-
-Tests are written in tests/ using pytest, focused on obfuscate_handler() (not Lambda).
-pytest -v
 
 Sample tests:
 

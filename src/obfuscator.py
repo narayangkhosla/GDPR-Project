@@ -36,6 +36,7 @@ def obfuscate_csv(content: str, pii_fields: List[str]) -> bytes:
     if content.strip().startswith("{") or content.strip().startswith("["):
         raise ValueError("Input is not a valid CSV. JSON detected.")
 
+    found_fields = set()
     input_buffer = io.StringIO(content)
     reader = csv.DictReader(input_buffer)
 
@@ -55,8 +56,17 @@ def obfuscate_csv(content: str, pii_fields: List[str]) -> bytes:
                 raise TypeError("All PII field names must be strings.")
             if field in row:
                 row[field] = "***"
+                found_fields.add(field)
         writer.writerow(row)
 
+    missing_fields = set(pii_fields) - found_fields
+
+    if not found_fields:
+        logger.warning("⚠️ None of the specified PII fields were found in the CSV file.")
+        raise ValueError("No matching PII fields found — obfuscation skipped.")
+
+    if missing_fields:
+        logger.warning(f"⚠️ Some PII fields were not found: {', '.join(missing_fields)}")
     return output_buffer.getvalue().encode("utf-8")
 
 
@@ -88,10 +98,13 @@ def obfuscate_json(content: Union[str, bytes], pii_fields: List[str]) -> bytes:
     except json.JSONDecodeError:
         raise ValueError("Invalid JSON input")
 
+    found_fields = set()
+
     def obfuscate_record(record: dict):
         for field in pii_fields:
             if field in record:
                 record[field] = "***"
+                found_fields.add(field)
         return record
 
     if isinstance(data, dict):
@@ -103,6 +116,17 @@ def obfuscate_json(content: Union[str, bytes], pii_fields: List[str]) -> bytes:
     else:
         raise ValueError("Unsupported JSON format (must be object or list of objects)")
 
+    missing_fields = set(pii_fields) - found_fields
+    if not found_fields:
+        logger.warning(
+            "⚠️ None of the specified PII fields were found in the JSON data."
+        )
+        raise ValueError("No matching PII fields found — obfuscation skipped.")
+
+    if missing_fields:
+        logger.warning(
+            f"⚠️ Some PII fields were not found in JSON: {', '.join(missing_fields)}"
+        )
     return json.dumps(obfuscated, ensure_ascii=False, indent=2).encode("utf-8")
 
 
@@ -130,9 +154,24 @@ def obfuscate_parquet(content: Union[bytes, str], pii_fields: List[str]) -> byte
         logger.exception("Failed to read parquet")
         raise ValueError("Invalid Parquet format")
 
+    found_fields = set()
     for field in pii_fields:
         if field in df.columns:
             df[field] = "***"
+            found_fields.add(field)
+
+    missing_fields = set(pii_fields) - found_fields
+
+    if not found_fields:
+        logger.warning(
+            "⚠️ None of the specified PII fields were found in the Parquet file."
+        )
+        raise ValueError("No matching PII fields found — obfuscation skipped.")
+
+    if missing_fields:
+        logger.warning(
+            f"⚠️ Some PII fields were not found in Parquet: {', '.join(missing_fields)}"
+        )
 
     out_buffer = io.BytesIO()
     df.to_parquet(out_buffer, index=False, engine="pyarrow")

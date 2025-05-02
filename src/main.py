@@ -48,9 +48,6 @@ def obfuscate_handler(json_input: str, encoding_override: str = None) -> bytes:
     if not is_valid_s3_uri(s3_uri):
         raise ValueError("Invalid S3 URI format.")
 
-    # if not s3_uri.lower().endswith(".csv"):
-    #     raise UnsupportedFormatError("Only .csv files are currently supported.")
-
     if s3_uri.lower().endswith(".csv"):
         file_format = "csv"
         binary = False
@@ -61,7 +58,6 @@ def obfuscate_handler(json_input: str, encoding_override: str = None) -> bytes:
         file_format = "parquet"
         binary = True
     else:
-        # raise UnsupportedFormatError("Only .csv files are currently supported.")
         raise UnsupportedFormatError(
             "Only .csv, .json, and .parquet files are supported."
         )
@@ -203,7 +199,6 @@ def main():
             print(f"Obfuscated file written to {args.output}")
         else:
             print("=== Obfuscated Data Output ===")
-            # print(obfuscated_data.decode("utf-8").encode().decode("unicode_escape"))
             print(obfuscated_data.decode("utf-8"))
     except S3ObjectNotFoundError as e:
         logger.warning(f"🛑 Skipping - file not found: {e.bucket}/{e.key}")
