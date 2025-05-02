@@ -31,17 +31,21 @@ def test_obfuscate_specified_fields_only():
 def test_field_not_in_header():
     input_data = "id,name\n1,John"
     pii_fields = ["email"]
-    result = obfuscate_csv(input_data, pii_fields).decode("utf-8")
-    assert "***" not in result  # No obfuscation
+    with pytest.raises(ValueError, match="No matching PII fields"):
+        obfuscate_csv(input_data, pii_fields)
 
 
 # Fields are case-sensitive
 def test_field_case_sensitivity():
     input_data = "id,Name,Email\n1,John,john@example.com"
-    pii_fields = ["name", "email"]  # Lowercase
+    pii_fields = [
+        "name",
+        "email",
+    ]  # Lowercase PII fields, should match regardless of header case
     result = obfuscate_csv(input_data, pii_fields).decode("utf-8")
-    assert "John" in result
-    assert "john@example.com" in result
+    assert "***" in result
+    assert "John" not in result
+    assert "john@example.com" not in result
 
 
 # Field exists but value is empty
@@ -63,10 +67,9 @@ def test_field_already_obfuscated():
 # No matching fields to obfuscate
 def test_no_fields_to_obfuscate():
     input_data = "id,name,email\n1,John,john@example.com"
-    pii_fields = ["phone"]
-    result = obfuscate_csv(input_data, pii_fields).decode("utf-8")
-    assert "John" in result
-    assert "john@example.com" in result
+    pii_fields = ["phone"]  # no-match
+    with pytest.raises(ValueError, match="No matching PII fields"):
+        obfuscate_csv(input_data, pii_fields)
 
 
 # multiple rows
@@ -213,10 +216,8 @@ def test_obfuscate_json_single_object():
 def test_obfuscate_json_missing_fields():
     input_data = json.dumps({"id": 1, "age": 25})
     pii_fields = ["email", "name"]
-    result = obfuscate_json(input_data, pii_fields).decode("utf-8")
-
-    assert "***" not in result
-    assert "age" in result
+    with pytest.raises(ValueError, match="No matching PII fields"):
+        obfuscate_json(input_data, pii_fields)
 
 
 # Invalid JSON format
@@ -231,6 +232,17 @@ def test_obfuscate_json_invalid_structure():
     invalid = json.dumps(["string1", "string2"])
     with pytest.raises(ValueError):
         obfuscate_json(invalid, ["name"])
+
+
+def test_json_field_case_insensitivity():
+    input_data = json.dumps({"ID": 1, "Name": "Alice", "Email": "alice@example.com"})
+    pii_fields = ["name", "email"]  # Lowercase on purpose
+
+    result = obfuscate_json(input_data, pii_fields).decode("utf-8")
+
+    assert "***" in result
+    assert "Alice" not in result
+    assert "alice@example.com" not in result
 
 
 def test_obfuscate_parquet_valid():
@@ -255,6 +267,23 @@ def test_obfuscate_parquet_valid():
 def test_obfuscate_parquet_invalid_format():
     with pytest.raises(ValueError):
         obfuscate_parquet(b"not a parquet file", ["name"])
+
+
+def test_parquet_field_case_insensitivity():
+    # Create a DataFrame with uppercase column names
+    df = pd.DataFrame({"ID": [1], "Name": ["Bob"], "Email": ["bob@example.com"]})
+
+    buffer = io.BytesIO()
+    df.to_parquet(buffer, index=False, engine="pyarrow")
+    buffer.seek(0)
+
+    pii_fields = ["name", "email"]  # Lowercase
+
+    obfuscated_bytes = obfuscate_parquet(buffer.read(), pii_fields)
+    result_df = pd.read_parquet(io.BytesIO(obfuscated_bytes), engine="pyarrow")
+
+    assert result_df["Name"].iloc[0] == "***"
+    assert result_df["Email"].iloc[0] == "***"
 
 
 # def test_obfuscate_handler_json(monkeypatch, s3_bucket):
