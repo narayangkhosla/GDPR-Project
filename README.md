@@ -17,7 +17,7 @@ Supports:
 - **Core Libraries**: Pandas, Numpy, Boto3, PyArrow
 - **Testing Framework:** Pytest
 - **AWS Services (via LocalStack):** S3, Lambda
-- **Code Quality & Security Tools:** 
+- **Code Quality & Security Tools:**
   - Ruff (linting and auto-fixing)
   - Flake8 (style checks)
   - Black (code formatter)
@@ -62,10 +62,13 @@ project-root/ │ ├── src/ # All source code │ ├── main.py # CLI +
 ## 🚀 How to Run the Program
 
 ### <u>If you are on a WINDOWS machine, perform the following steps:</u>
+
 The project provides two PowerShell scripts to help you test the obfuscation workflow from start to finish using local data and LocalStack S3.
+
 #### Step 1. 📦 Create and activate your virtual environment:
+
     python -m venv .venv
-    .venv\Scripts\Activate.ps1 
+    .venv\Scripts\Activate.ps1
 
 #### Step 2. 📦 Generate Sample Test Data:
 
@@ -89,12 +92,35 @@ Run this script to:
 
         .\run_test_data.ps1
 
-### ⚙️ Using .\run_test_data.ps1
+### <u>If you are on a MAC machine, perform the following steps:</u>
+
+#### Step 1. 📦 Create and activate your virtual environment:
+
+    python -m venv .venv
+    source .venv/bin/activate
+
+#### Step 2. 📦 Run the following script:
+
+    bash ./bootstrap_project.sh
+
+This purpose of this file is to:
+
+- Install all dependencies
+- Make helper scripts (i.e., create_test_data.sh, run_test_data.sh, check_pep8.sh, run-pytest-mac.sh) executable
+- Verify that LocalStack is running
+
+### ⚙️ Working of .\run_test_data.ps1 (Windows)
+
+### OR
+
+### bash ./run_test_data.sh (Mac)
 
 📝 Field Specification
 You can specify the fields to obfuscate using a comma-separated string(s):
 
-    $fields = @("name", "email_address")
+    $fields = @("name", "email_address") - for Windows
+
+    fields="name email_address" - for Mac
 
 These fields are passed to the CLI using the --fields argument.
 
@@ -102,38 +128,25 @@ These fields are passed to the CLI using the --fields argument.
 The script uses intelligent logic to ensure only meaningful files are written:
 
 - ✅ **If all specified fields match:**
-    All matching fields are obfuscated, and a success message is shown, for example:
-        
+  All matching fields are obfuscated, and a success message is shown, for example:
+
         Obfuscated file written to ./results/obfuscated_sample_20250502_155814.csv
 
 - ⚠️ **If some fields match, and some don’t:**
-    Only the valid fields are obfuscated, and a warning is printed listing the non-matching fields. For example, if I had passed name1 (instead of name), email_address, it will obfuscate email_address, and leave rest as is.
+  Only the valid fields are obfuscated, and a warning is printed listing the non-matching fields. For example, if I had passed name1 (instead of name), email_address, it will obfuscate email_address, and leave rest as is.
 
         ⚠️Some PII fields were not found in JSON: name1
 
         Obfuscated file written to ./results/obfuscated_sample_20250502_161335.csv
 
 - ❌ **If none of the fields match:**
-    The obfuscator skips writing the output file, and prints a clear error message in the terminal, for example:
+  The obfuscator skips writing the output file, and prints a clear error message in the terminal, for example:
 
-        ⚠️ None of the specified PII fields were found in the CSV file.
+          ⚠️ None of the specified PII fields were found in the CSV file.
 
-        ❌ Error: No matching PII fields found — obfuscation skipped.
+          ❌ Error: No matching PII fields found — obfuscation skipped.
 
-### <u>If you are on a MAC machine, perform the following steps:</u>
-#### Step 1. 📦 Create and activate your virtual environment:
-    python -m venv .venv
-    source .venv/bin/activate
-
-#### Step 2. 📦 Run the following script:
-    bash ./bootstrap_project.sh
-
-This purpose of this file is to:
-- Install all dependencies
-- Make helper scripts (i.e., create_test_data.sh, run_test_data.sh, check_pep8.sh, run-pytest-mac.sh) executable
-- Verify that LocalStack is running
-
-By default, All obfuscated files are saved in a dedicated `results/` folder:
+  By default, All obfuscated files are saved in a dedicated `results/` folder:
 
 - `results/obfuscated_sample_YYYYMMDD_HHMMSS.csv`
 - `results/obfuscated_sample_YYYYMMDD_HHMMSS.json`
@@ -152,17 +165,17 @@ Check the `results/` folder.
 - For both **CSV** and **JSON** files, you can simply open them directly to view the obfuscated data.
 - For **Parquet** files, use the following command to preview the obfuscated output:
 
-    ```bash
-    python read_parq_file.py
-    ```
+  ```bash
+  python read_parq_file.py
+  ```
 
-    This will automatically detect and read the **most recently generated** Parquet file from the `results/` folder.
+  This will automatically detect and read the **most recently generated** Parquet file from the `results/` folder.
 
-    💡 To view a specific file, use the `--file` argument (just the filename, no path needed):
+  💡 To view a specific file, use the `--file` argument (just the filename, no path needed):
 
-    ```bash
-    python read_parq_file.py --file obfuscated_sample_20250501_132159.parquet
-    ```
+  ```bash
+  python read_parq_file.py --file obfuscated_sample_20250501_132159.parquet
+  ```
 
 ## ✅ Running Tests with Pytest
 
@@ -212,14 +225,16 @@ This tool is tested using LocalStack.
     localstack start
 
 ### 🧪 3. Generate Test Data
-Refer to the above mentioned steps, depending on the Operating System. 
+
+Refer to the above mentioned steps, depending on the Operating System.
 
 ### 🛠️ 4. Run End-to-End Obfuscation Tests
-Refer to the above mentioned steps, depending on the Operating System. 
+
+Refer to the above mentioned steps, depending on the Operating System.
 
 ### 🔍 5. Inspect Parquet Output (Optional)
 
-    python read_parq_file.py 
+    python read_parq_file.py
 
 ### 💻 CLI Usage
 

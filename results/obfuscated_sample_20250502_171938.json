@@ -1,82 +1,82 @@
 [
   {
     "student_id": 4037,
-    "name": "Ivan Smith",
+    "name": "***",
     "course": "Course0",
     "cohort": "2024",
     "graduation_date": "2025-01-15",
-    "email_address": "ivan.smith@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 6092,
-    "name": "Bob Miller",
+    "name": "***",
     "course": "Course1",
     "cohort": "2025",
     "graduation_date": "2025-02-15",
-    "email_address": "bob.miller@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 8956,
-    "name": "Ethan Smith",
+    "name": "***",
     "course": "Course2",
     "cohort": "2024",
     "graduation_date": "2025-03-15",
-    "email_address": "ethan.smith@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 1968,
-    "name": "Fiona Williams",
+    "name": "***",
     "course": "Course0",
     "cohort": "2025",
     "graduation_date": "2025-04-15",
-    "email_address": "fiona.williams@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 9940,
-    "name": "Diana Martinez",
+    "name": "***",
     "course": "Course1",
     "cohort": "2024",
     "graduation_date": "2025-05-15",
-    "email_address": "diana.martinez@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 5911,
-    "name": "Hannah Garcia",
+    "name": "***",
     "course": "Course2",
     "cohort": "2025",
     "graduation_date": "2025-06-15",
-    "email_address": "hannah.garcia@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 1859,
-    "name": "Fiona Garcia",
+    "name": "***",
     "course": "Course0",
     "cohort": "2024",
     "graduation_date": "2025-07-15",
-    "email_address": "fiona.garcia@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 8093,
-    "name": "Alice Miller",
+    "name": "***",
     "course": "Course1",
     "cohort": "2025",
     "graduation_date": "2025-08-15",
-    "email_address": "alice.miller@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 2722,
-    "name": "Ivan Lee",
+    "name": "***",
     "course": "Course2",
     "cohort": "2024",
     "graduation_date": "2025-09-15",
-    "email_address": "ivan.lee@example.com"
+    "email_address": "***"
   },
   {
     "student_id": 7583,
-    "name": "Fiona Davis",
+    "name": "***",
     "course": "Course0",
     "cohort": "2025",
     "graduation_date": "2025-010-15",
-    "email_address": "fiona.davis@example.com"
+    "email_address": "***"
   }
 ]
