@@ -229,6 +229,7 @@ If LocalStack is installed globally (via `brew`, `pip`, or system package manage
 
 ```bash
 localstack start
+```
 
 ## ⚙️ Setup
 
@@ -271,14 +272,17 @@ Tests verify functionality, error handling, edge cases, and integration across s
 Below is a categorized list of all test cases:
 
 ### 📁 test_bandit_scan.py
+
 - test_bandit_scan
 - test_bandit_scan
 
 ### 📁 test_exceptions.py
+
 - test_s3_object_not_found_error_message
 - test_s3_object_not_found_error_raises
 
 ### 📁 test_input_validation.py
+
 - test_empty_file_path
 - test_empty_pii_fields_list
 - test_file_extension_unsupported_type
@@ -289,6 +293,7 @@ Below is a categorized list of all test cases:
 - test_pii_fields_not_a_list
 
 ### 📁 test_obfuscate_handler_formats.py
+
 - test_csv_file_obfuscates_successfully
 - test_json_file_obfuscates_successfully
 - test_lambda_json_file_obfuscates_successfully
@@ -296,6 +301,7 @@ Below is a categorized list of all test cases:
 - test_parquet_file_obfuscates_successfully
 
 ### 📁 test_obfuscator.py
+
 - test_csv_with_missing_values
 - test_csv_with_only_headers
 - test_csv_with_quoted_headers
@@ -326,6 +332,7 @@ Below is a categorized list of all test cases:
 - test_pii_fields_with_spaces
 
 ### 📁 test_s3_utils.py
+
 - test_fetch_file_from_s3
 - test_fetch_file_from_s3
 - test_fetch_file_from_s3
@@ -373,4 +380,7 @@ The following files are safe to skip:
 
 These were part of an **early prototype** for AWS Lambda integration and are included here for reference only.
 👉 The project meets the MVP using the CLI, LocalStack, and handler-based testing with no Lambda code required.
+
+```
+
 ```
