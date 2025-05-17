@@ -212,6 +212,24 @@ Both of the above commands will:
 - ✅ Run all test files matching test\_\*.py
 - ❌ Exclude test_integration.py and test_lambda_end_to_end.py, which are related to Lambda-based functionality that is not part of the MVP.
 
+## 🐳 Using LocalStack with Docker
+
+This project relies on [LocalStack](https://docs.localstack.cloud/) to emulate AWS S3 services locally for testing.
+
+To use LocalStack, you must have **Docker** installed on your system.
+
+### ✅ Install Docker
+
+- macOS: [Install Docker Desktop](https://docs.docker.com/desktop/install/mac-install/)
+- Windows: [Install Docker Desktop](https://docs.docker.com/desktop/install/windows-install/)
+
+### ✅ Start LocalStack
+
+If LocalStack is installed globally (via `brew`, `pip`, or system package manager):
+
+```bash
+localstack start
+
 ## ⚙️ Setup
 
 ### ✅ 1. Install Requirements
@@ -246,8 +264,8 @@ Refer to the above mentioned steps, depending on the Operating System.
 
 ### 🧪 Test Coverage
 
-This project includes comprehensive test coverage across all core components using `pytest`.  
-Each test is grouped by the module it targets (e.g., CSV obfuscation, S3 utilities, input validation).  
+This project includes comprehensive test coverage across all core components using `pytest`.
+Each test is grouped by the module it targets (e.g., CSV obfuscation, S3 utilities, input validation).
 Tests verify functionality, error handling, edge cases, and integration across supported file formats (CSV, JSON, Parquet).
 
 Below is a categorized list of all test cases:
@@ -353,5 +371,6 @@ The following files are safe to skip:
 - `deployment-requirements.txt`
 - `pytest.ini`
 
-These were part of an **early prototype** for AWS Lambda integration and are included here for reference only.  
+These were part of an **early prototype** for AWS Lambda integration and are included here for reference only.
 👉 The project meets the MVP using the CLI, LocalStack, and handler-based testing with no Lambda code required.
+```
